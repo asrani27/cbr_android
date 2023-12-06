@@ -2,26 +2,27 @@ import 'dart:ui';
 
 import 'package:cbr_android/api/bapok.dart';
 import 'package:cbr_android/screen/dashboard.dart';
-import 'package:cbr_android/screen/register.dart';
+import 'package:cbr_android/screen/login.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sn_progress_dialog/sn_progress_dialog.dart';
 
-class login extends StatefulWidget {
-  const login({super.key});
+class register extends StatefulWidget {
+  const register({super.key});
 
   @override
-  State<login> createState() => _loginState();
+  State<register> createState() => _registerState();
 }
 
-class _loginState extends State<login> {
+class _registerState extends State<register> {
   final _formState = GlobalKey<FormState>();
   bool _showPassword = false;
   TextEditingController _usernameController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
+  TextEditingController _nameController = TextEditingController();
 
-  Future _LoginService() async {
-    print('akses login');
+  Future _registerService() async {
+    print('akses register');
     ProgressDialog pd = ProgressDialog(context: context);
     pd.show(
         max: 100,
@@ -34,25 +35,36 @@ class _loginState extends State<login> {
         msgColor: Colors.white,
         valueColor: Colors.white);
     try {
-      var response = await PostDataService()
-          .LoginService(_usernameController.text, _passwordController.text);
+      var response = await PostDataService().RegisterService(
+          _usernameController.text,
+          _passwordController.text,
+          _nameController.text);
 
-      if (response == null) {
+      print(response);
+      if (response == false) {
         pd.close();
         Get.defaultDialog(
-          title: 'Username/Password tidak ditemukan',
+          title: 'Username sudah ada',
           content: Container(),
           textCancel: 'Exit',
         );
-      } else if (response == 401) {
+      } else if (response == true) {
         pd.close();
         Get.defaultDialog(
-          title: 'Tidak bisa akses ke server',
-          content: Container(),
+          title: 'Berhasil daftar, silahkan login',
+          content: Container(
+            child: TextButton(
+              child: Text('Ke Login Page'),
+              onPressed: () => {
+                Get.offAll(() => login()),
+              },
+            ),
+          ),
           textCancel: 'Exit',
         );
+        //Get.offAll(() => login());
       } else {
-        Get.offAll(() => dashboard());
+        Get.offAll(() => login());
       }
     } catch (e) {
       pd.close();
@@ -67,7 +79,6 @@ class _loginState extends State<login> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    //final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: null,
       body: Container(
@@ -92,6 +103,7 @@ class _loginState extends State<login> {
                       ),
                     ),
                   ),
+                  _buildNama(),
                   SizedBox(
                     height: 10,
                   ),
@@ -124,6 +136,23 @@ class _loginState extends State<login> {
     );
   }
 
+  Widget _buildNama() => TextFormField(
+        validator: (value) {
+          if (value == '') {
+            return "Nama tidak boleh kosong";
+          }
+          return null;
+        },
+        decoration: InputDecoration(
+          focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.deepPurple)),
+          labelText: "Masukkan Nama Lengkap",
+          prefixIcon: Icon(Icons.person),
+          border: OutlineInputBorder(),
+        ),
+        controller: _nameController,
+      );
+
   Widget _buildUsername() => TextFormField(
         validator: (value) {
           if (value == '') {
@@ -140,6 +169,7 @@ class _loginState extends State<login> {
         ),
         controller: _usernameController,
       );
+
   Widget _buildPassword() => TextFormField(
         validator: (value) {
           if (value == '') {
@@ -168,18 +198,18 @@ class _loginState extends State<login> {
   Widget _buildLogin() => ElevatedButton.icon(
       onPressed: () {
         if (_formState.currentState!.validate()) {
-          _LoginService();
+          _registerService();
         }
       },
       icon: Icon(Icons.login_outlined),
-      label: Text("Masuk"),
+      label: Text("Register"),
       style: ElevatedButton.styleFrom(
           minimumSize: Size.fromHeight(50), primary: Colors.deepPurple));
 
   Widget _buildTextButton() => TextButton(
-        child: Text('Register'),
+        child: Text('Kembali Ke Login Page'),
         onPressed: () {
-          Get.offAll(() => register());
+          Get.offAll(() => login());
         },
       );
 }

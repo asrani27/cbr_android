@@ -5,7 +5,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 class PostDataService {
   var token;
 
-  final String _baseUrl = "http://localhost:8000";
+  // final String _baseUrl = "http://localhost:8000";
+  final String _baseUrl = "http://10.0.2.2:8000";
+
   //final String _baseUrl = "https://bapok-disperdagin.banjarmasinkota.go.id";
 
   Dio dio = Dio();
@@ -50,6 +52,50 @@ class PostDataService {
     }
   }
 
+  RegisterService(String username, String password, String nama) async {
+    dio.options.headers['content-Type'] = 'application/json';
+    dio.options.headers['Accept'] = 'application/json';
+    final responseData = await dio.post("$_baseUrl/api/register", data: {
+      'username': username,
+      'password': password,
+      'nama': nama,
+    });
+
+    print(['response test:', responseData.data['message']]);
+
+    if (responseData.statusCode == 200) {
+      if (responseData.data['message'] == 'gagal') {
+        return false;
+      } else {
+        return true;
+      }
+    } else {
+      return 401;
+    }
+  }
+
+  TambahService(String dropdownvalue) async {
+    dio.options.headers['content-Type'] = 'application/json';
+    dio.options.headers['Accept'] = 'application/json';
+    dio.options.headers["authorization"] = "Bearer " + await getToken();
+
+    final responseData = await dio.post("$_baseUrl/api/tambah", data: {
+      'id': dropdownvalue,
+    });
+
+    print(['response test:', responseData.data['message']]);
+
+    if (responseData.statusCode == 200) {
+      if (responseData.data['message'] == 'gagal') {
+        return false;
+      } else {
+        return true;
+      }
+    } else {
+      return 401;
+    }
+  }
+
   checkToken() async {
     dio.options.headers['content-Type'] = 'application/json';
     dio.options.headers['Accept'] = 'application/json';
@@ -78,6 +124,27 @@ class PostDataService {
 
     //print(['responseku :', responseData.data]);
     return responseData.data;
+  }
+
+  deleteService(String idciri) async {
+    dio.options.headers['content-Type'] = 'application/json';
+    dio.options.headers['Accept'] = 'application/json';
+    dio.options.headers["authorization"] = "Bearer " + await getToken();
+    final responseData = await dio.get("$_baseUrl/api/deleteciri/" + idciri,
+        options: Options(
+            validateStatus: (_) => true,
+            contentType: Headers.jsonContentType,
+            responseType: ResponseType.json));
+
+    if (responseData.statusCode == 200) {
+      if (responseData.data['message'] == 'gagal') {
+        return false;
+      } else {
+        return true;
+      }
+    } else {
+      return 401;
+    }
   }
 
   dataKomoditi(String pasar_id, String tanggal) async {

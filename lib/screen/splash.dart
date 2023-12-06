@@ -30,21 +30,19 @@ class _splashState extends State<splash> {
   }
 
   Future checkToken() async {
-    //var response = await PostDataService().checkToken();
-
-    // if (response == 401) {
-    Get.offAll(() => login());
-    // } else {
-    // print('kedashboard');
-    // Get.offAll(() => dashboard());
-
-    //}
+    var response = await PostDataService().checkToken();
+    print(response);
+    if (response == 401) {
+      Get.offAll(() => login());
+    } else {
+      Get.offAll(() => dashboard());
+    }
   }
 
   @override
   void initState() {
     Future.delayed(Duration(seconds: 2), () {
-      Get.offAll(() => login());
+      checkToken();
       //Get.offAll(() => dashboard());
     });
     //checkToken();

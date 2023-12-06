@@ -16,7 +16,7 @@ class _aboutState extends State<about> {
         child: AppBar(
           backgroundColor: Colors.deepPurple,
           centerTitle: true,
-          title: Text('About App'),
+          title: Text('Tentang Aplikasi'),
         ),
       ),
       body: Center(
@@ -24,11 +24,11 @@ class _aboutState extends State<about> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'DEDIKASI BAIMAN',
+              'TES KEPRIBADIAN ',
               style: TextStyle(fontSize: 20, color: Colors.purple[800]),
             ),
             Text(
-              'Disperdagin',
+              'METODE CBR',
               style: TextStyle(fontSize: 18, color: Colors.purple[500]),
             ),
             Text('Versi 1.1.0'),
