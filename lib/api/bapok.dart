@@ -147,6 +147,27 @@ class PostDataService {
     }
   }
 
+  checkHasil() async {
+    dio.options.headers['content-Type'] = 'application/json';
+    dio.options.headers['Accept'] = 'application/json';
+    dio.options.headers["authorization"] = "Bearer " + await getToken();
+    final responseData = await dio.get("$_baseUrl/api/checkhasil",
+        options: Options(
+            validateStatus: (_) => true,
+            contentType: Headers.jsonContentType,
+            responseType: ResponseType.json));
+
+    if (responseData.statusCode == 200) {
+      if (responseData.data['message'] == 'gagal') {
+        return false;
+      } else {
+        return true;
+      }
+    } else {
+      return 401;
+    }
+  }
+
   dataKomoditi(String pasar_id, String tanggal) async {
     dio.options.headers['content-Type'] = 'application/json';
     dio.options.headers['Accept'] = 'application/json';

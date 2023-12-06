@@ -53,6 +53,24 @@ class _dashboardState extends State<dashboard> {
     }
   }
 
+  Future _checkHasil() async {
+    var response = await PostDataService().checkHasil();
+    if (response == true) {
+      _dataUser();
+      Get.defaultDialog(
+        title: 'Berhasil',
+        content: Container(),
+        textCancel: 'Exit',
+      );
+    } else {
+      Get.defaultDialog(
+        title: 'gagal',
+        content: Container(),
+        textCancel: 'Exit',
+      );
+    }
+  }
+
   void initState() {
     _dataUser();
 
@@ -244,7 +262,7 @@ class _dashboardState extends State<dashboard> {
             Container(
               child: ElevatedButton.icon(
                   onPressed: () {
-                    print('tambah');
+                    _checkHasil();
                   },
                   icon: Icon(Icons.refresh_outlined),
                   label: Text("Check Hasil Kepribadian"),
